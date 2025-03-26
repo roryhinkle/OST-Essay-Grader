@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OST Essay Grader</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        textarea { width: 80%; height: 150px; }
+        button { margin-top: 10px; padding: 10px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>OST Essay Grader (Improved Accuracy)</h2>
+    <textarea id="essayInput" placeholder="Enter your essay here..."></textarea>
+    <br>
+    <button onclick="gradeEssay()">Grade Essay</button>
+    <p id="result"></p>
+
+    <script>
+        function gradeEssay() {
+            let essay = document.getElementById("essayInput").value;
+            let score = calculateScore(essay);
+            document.getElementById("result").innerText = "Predicted Score: " + score + "/10";
+        }
+
+        function calculateScore(essay) {
+            let words = essay.split(/\s+/).length;
+            let sentences = essay.split(/[.!?]/).length - 1;
+            let paragraphs = essay.split(/\n\n/).length;
+            let spellingErrors = countSpellingErrors(essay);
+            
+            let lengthScore = words > 150 ? 4 : words > 80 ? 2 : 1;
+            let structureScore = (essay.includes("introduction") && essay.includes("conclusion")) ? 3 : 1;
+            let coherenceScore = (sentences / paragraphs > 3) ? 3 : 1;
+            let grammarScore = spellingErrors < 3 ? 3 : 1;
+            let argumentScore = essay.includes("because") || essay.includes("for example") ? 3 : 1;
+
+            let totalScore = lengthScore + structureScore + coherenceScore + grammarScore + argumentScore;
+            return totalScore > 10 ? 10 : totalScore; 
+        }
+
+        function countSpellingErrors(text) {
+            let dictionary = ["the", "a", "an", "this", "that", "introduction", "conclusion", "because", "example", "reason", "paragraph", "sentences", "words"];
+            let words = text.toLowerCase().replace(/[.,!?]/g, "").split(/\s+/);
+            let errors = 0;
+
+            words.forEach(word => {
+                if (!dictionary.includes(word) && word.length > 2) {
+                    errors++;
+                }
+            });
+
+            return errors;
+        }
+    </script>
+</body>
+</html>
